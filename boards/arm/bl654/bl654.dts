@@ -1,0 +1,149 @@
+// Copyright (c) 2022 Nordic Semiconductor ASA
+// SPDX-License-Identifier: Apache-2.0
+
+/dts-v1/;
+#include <nordic/nrf52840_qiaa.dtsi>
+#include "bl654-pinctrl.dtsi"
+
+#include <dt-bindings/led/led.h>
+#define SPI_FREQ    4000000
+#define ZERO_FRAME  0x40
+#define ONE_FRAME   0x70
+
+/ {
+	model = "Laird BL654 Dev Kit";
+	compatible = "nordic,pca10056-dk";
+
+	chosen {
+		vpk,kscan = &kscan0;
+		zephyr,console = &cdc_acm_uart0;
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+	};
+
+	kscan0: kscan {
+		compatible = "vpk,kscan-matrix";
+		label = "KSCAN";
+		status = "okay";
+
+		row-gpios =
+			<&gpio0 0 0>,
+			<&gpio0 1 0>,
+			<&gpio0 8 0>,
+			<&gpio0 6 0>,
+			<&gpio0 30 0>,
+			<&gpio1 6 0>;
+
+		col-gpios =
+			<&gpio1 5 0>,
+			<&gpio0 9 0>,
+			<&gpio0 10 0>,
+			<&gpio1 15 0>,
+			<&gpio1 14 0>,
+			<&gpio0 3 0>,
+			<&gpio0 5 0>,
+			<&gpio0 7 0>,
+			<&gpio0 11 0>,
+			<&gpio0 16 0>,
+			<&gpio1 3 0>,
+			<&gpio0 25 0>,
+			<&gpio1 1 0>,
+			<&gpio1 2 0>,
+			<&gpio1 4 0>;
+	};
+
+    chosen {
+		vpk,kscan = &kscan0;
+	};
+
+	/* These aliases are provided for compatibility with samples */
+	aliases {
+		led-strip = &led_strip;
+	};
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&spi1 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	sck-pin = <12>;
+	mosi-pin = <39>; // 39 -> LED DIN
+	miso-pin = <14>;
+
+	led_strip: ws2812@0 {
+		compatible = "worldsemi,ws2812-spi";
+		label = "WS2812";
+
+		/* SPI */
+		reg = <0>; /* ignored, but necessary for SPI bindings */
+		spi-max-frequency = <SPI_FREQ>;
+
+		/* WS2812 */
+		chain-length = <84>;
+		color-mapping = <LED_COLOR_ID_GREEN
+				 		LED_COLOR_ID_RED
+				 		LED_COLOR_ID_BLUE>;
+		spi-one-frame = <ONE_FRAME>;
+		spi-zero-frame = <ZERO_FRAME>;
+	};
+};
+
+&flash_controller {
+	status = "okay";
+};
+
+&flash0 {	
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x000000000 0x0000C000>;
+		};
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 0x00067000>;
+		};
+		slot1_partition: partition@73000 {
+			label = "image-1";
+			reg = <0x00073000 0x00067000>;
+		};
+		scratch_partition: partition@da000 {
+			label = "image-scratch";
+			reg = <0x000da000 0x0001e000>;
+		};
+
+		/*
+		 * The flash starting at 0x000f8000 and ending at
+		 * 0x000fffff is reserved for use by the application.
+		 */
+
+		/*
+		 * Storage partition will be used by FCB/LittleFS/NVS
+		 * if enabled.
+		 */
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0x000f8000 0x00008000>;
+		};
+	};
+};
+
+zephyr_udc0: &usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "CDC_ACM_0";
+	};
+};
