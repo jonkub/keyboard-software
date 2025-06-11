@@ -1,0 +1,28 @@
+menuconfig VPK_KSCAN_MATRIX
+    bool "KSCAN backend for gpio matrix"
+    depends on KSCAN
+    help
+      Enable GPIO-based keyboard matrix driver
+
+if VPK_KSCAN_MATRIX
+
+config VPK_KSCAN_MATRIX_PERIOD_US
+  int "Time between each scan of the gpio matrix in us"
+  default 1000
+  range 200 1000000
+  help
+    Time in between each scan of the gpio keyboard matrix.
+    Set in us and with a range of 200us to 10s. Lower values
+    result in a lower average input latency.
+
+config VPK_KSCAN_MATRIX_DEBOUNCE_US
+  int "Debounce time for each key"
+  default 5000
+  range 200 5000
+  help
+    Time after a key was pressed or released in which the 
+    state can't change again. Set in us with a range of 200us
+    to 5ms. Exceedingly low values may result in errors due 
+    to switch "bouncing". 
+
+endif #VPK_KSCAN_MATRIX

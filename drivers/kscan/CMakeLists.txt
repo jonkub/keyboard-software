@@ -1,0 +1,4 @@
+cmake_minimum_required(VERSION 3.20.0)
+
+zephyr_library_named(vpk__kscan__driver)
+zephyr_library_sources_ifdef(CONFIG_VPK_KSCAN_MATRIX vpk_kscan_matrix.c)

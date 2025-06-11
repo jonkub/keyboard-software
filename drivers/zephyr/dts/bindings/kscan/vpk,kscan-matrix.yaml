@@ -1,0 +1,13 @@
+description: Vampunzels Keyboard matrix
+
+compatible: "vpk,kscan-matrix"
+
+include: kscan.yaml
+
+properties:
+  row-gpios:
+    type: phandle-array
+    required: true
+  col-gpios:
+    type: phandle-array
+    required: true
