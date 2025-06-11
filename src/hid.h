@@ -207,7 +207,7 @@ namespace vpk::hid {
     };
 
     constexpr std::array<uint8_t, 84> keymap_qwerty = { 
-            ESC, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, MEDIA_VUP, SCROLLLOCK, PAUSE,
+            ESC, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, SYSRQ, SCROLLLOCK, PAUSE,
             GRAVE, N1, N2, N3, N4, N5, N6, N7, N8, N9, N0, MINUS, EQUAL, BACKSPACE, INSERT,
             TAB, Q, W, E, R, T, Y, U, I, O, P, LEFTBRACE, RIGHTBRACE, BACKSLASH, DELETE,
             CAPSLOCK, A, S, D, F, G, H, J, K, L, SEMICOLON, APOSTROPHE, ENTER, PAGEUP,
